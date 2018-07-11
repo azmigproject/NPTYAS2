@@ -213,7 +213,7 @@
           }
         }
       }
-    }
+    },
     {
    "type": "Microsoft.Compute/virtualMachines/extensions",
    "name": "MyCustomScriptExtension",
