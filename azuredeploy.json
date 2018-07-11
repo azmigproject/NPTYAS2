@@ -209,26 +209,26 @@
       }
     },
     {
-   "type": "Microsoft.Compute/virtualMachines/extensions",
-   "name": "MyCustomScriptExtension",
-   "apiVersion": "2015-05-01-preview",
-   "location": "[variables('location')]",
-   "dependsOn": [
-       "[concat('Microsoft.Compute/virtualMachines/',parameters('vmName'))]"
-   ],
-   "properties": {
-       "publisher": "Microsoft.Compute",
-       "type": "CustomScriptExtension",
-       "typeHandlerVersion": "1.7",
-       "autoUpgradeMinorVersion":true,
-       "settings": {
-           "fileUris": [
+      "apiVersion": "2015-06-15",
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(parameters('virtualMachineName'),'/installlutil')]",      
+      "location": "[variables('location')]",
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/',parameters('vmName'))]"
+      ],
+      "properties": {
+        "publisher": "Microsoft.Compute",
+        "type": "CustomScriptExtension",
+        "typeHandlerVersion": "1.7",
+        "autoUpgradeMinorVersion": true,
+        "settings": {
+          "fileUris": [
             "[uri(deployment().properties.templateLink.uri, 'Scripts/prerequsite.ps1')]"
           ],
-       "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -File prerequsite.ps1"
-     }
-   }
- }
+          "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -File prerequsite.ps1"
+        }
+      }
+    }
   ],
   "outputs": {
     "hostname": {
