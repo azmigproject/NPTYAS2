@@ -211,7 +211,7 @@
     {
       "apiVersion": "2015-06-15",
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(parameters('virtualMachineName'),'/installlutil')]",      
+      "name": "[concat(parameters('vmName'),'/installlutil')]",      
       "location": "[variables('location')]",
       "dependsOn": [
         "[concat('Microsoft.Compute/virtualMachines/',parameters('vmName'))]"
