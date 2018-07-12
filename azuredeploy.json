@@ -494,7 +494,7 @@
     },
     {      
       "type": "Microsoft.Network/networkSecurityGroups/securityRules",
-      "name": "[concat(variables('networkSecurityGroups_name'), '/', 'Port_3389']",
+      "name": "[concat(variables('networkSecurityGroups_name'), '/', 'Port_3389')]",
       "apiVersion": "2018-02-01",      
       "properties": {        
         "protocol": "TCP",
@@ -516,7 +516,7 @@
     },
     {     
       "type": "Microsoft.Network/networkSecurityGroups/securityRules",
-      "name": "[concat(variables('networkSecurityGroups_name'), '/', 'Port10080']",
+      "name": "[concat(variables('networkSecurityGroups_name'), '/', 'Port10080')]",
       "apiVersion": "2018-02-01",      
       "properties": {        
         "protocol": "*",
@@ -561,7 +561,7 @@
     {
      
       "type": "Microsoft.Network/networkSecurityGroups/securityRules",
-      "name": "[concat(variables('networkSecurityGroups_name'), '/', 'Port_80'))]",
+      "name": "[concat(variables('networkSecurityGroups_name'), '/', 'Port_80')]",
       "apiVersion": "2018-02-01",      
       "properties": {        
         "protocol": "TCP",
