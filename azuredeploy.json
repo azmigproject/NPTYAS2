@@ -494,7 +494,7 @@
     },
     {      
       "type": "Microsoft.Network/networkSecurityGroups/securityRules",
-      "name": "3389securitygroup",
+      "name": "[concat(variables('networkSecurityGroups_name'), '/', 'Port_3389']",
       "apiVersion": "2018-02-01",      
       "properties": {        
         "protocol": "TCP",
