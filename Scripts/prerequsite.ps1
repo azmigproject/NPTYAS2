@@ -77,5 +77,5 @@ Function InstallJava
     rm -Force $workd\jre*
 
 }
-#InstallJava
+InstallJava
 DowloadNPTYAS2Artifacts
