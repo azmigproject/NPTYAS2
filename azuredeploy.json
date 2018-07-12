@@ -20,7 +20,7 @@
         "description": "Password for the Virtual Machine."
       }
     },
-    
+
     "dnsLabelPrefix": {
       "type": "string",
       "metadata": {
@@ -81,9 +81,11 @@
     "subnetName": "Subnet",
     "subnetPrefix": "10.0.0.0/24",
     "publicIPAddressName": "myPublicIP",
-    "vmSize":"[parameters('vmSize')]",
+    "vmSize": "[parameters('vmSize')]",
     "vmName": "[parameters('vmName')]",
     "virtualNetworkName": "MyVNET",
+    "networksecuritygroupname": "appNetworkSecurityGroup",
+    "networkSecurityGroups_name": "[concat(parameters('vmName'), 'nsg')]",
     "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnetName'))]"
   },
   "resources": [
@@ -157,6 +159,267 @@
         ]
       }
     },
+    {      
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "name": "[variables('networksecuritygroupname')]",
+      "apiVersion": "2018-02-01",
+      "location": "[variables('location')]",     
+      "properties": {
+        "provisioningState": "Succeeded",
+        "resourceGuid": "36e245af-2093-4832-af56-e9f92a419ddc",
+        "securityRules": [
+          {
+            "name": "default-allow-rdp",            
+            "properties": {              
+              "protocol": "TCP",
+              "sourcePortRange": "*",
+              "destinationPortRange": "3389",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 1000,
+              "direction": "Inbound",
+              "sourcePortRanges": [ ],
+              "destinationPortRanges": [ ],
+              "sourceAddressPrefixes": [ ],
+              "destinationAddressPrefixes": [ ]
+            }
+          },
+          {
+            "name": "Port10080",            
+            "properties": {             
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "10080",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 1010,
+              "direction": "Inbound",
+              "sourcePortRanges": [ ],
+              "destinationPortRanges": [ ],
+              "sourceAddressPrefixes": [ ],
+              "destinationAddressPrefixes": [ ]
+            }
+          },
+          {
+            "name": "Port_10081",            
+            "properties": {              
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "10081",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 1020,
+              "direction": "Inbound",
+              "sourcePortRanges": [ ],
+              "destinationPortRanges": [ ],
+              "sourceAddressPrefixes": [ ],
+              "destinationAddressPrefixes": [ ]
+            }
+          },
+          {
+            "name": "Port_80",            
+            "properties": {              
+              "protocol": "TCP",
+              "sourcePortRange": "*",
+              "destinationPortRange": "80",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 1030,
+              "direction": "Inbound",
+              "sourcePortRanges": [ ],
+              "destinationPortRanges": [ ],
+              "sourceAddressPrefixes": [ ],
+              "destinationAddressPrefixes": [ ]
+            }
+          },
+          {
+            "name": "Port_1433",            
+            "properties": {              
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "1433",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 1040,
+              "direction": "Inbound",
+              "sourcePortRanges": [ ],
+              "destinationPortRanges": [ ],
+              "sourceAddressPrefixes": [ ],
+              "destinationAddressPrefixes": [ ]
+            }
+          },
+          {
+            "name": "Port_5432",            
+            "properties": {              
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "5432",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 1050,
+              "direction": "Inbound",
+              "sourcePortRanges": [ ],
+              "destinationPortRanges": [ ],
+              "sourceAddressPrefixes": [ ],
+              "destinationAddressPrefixes": [ ]
+            }
+          },
+          {
+            "name": "Port_445",            
+            "properties": {              
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "445",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 100,
+              "direction": "Outbound",
+              "sourcePortRanges": [ ],
+              "destinationPortRanges": [ ],
+              "sourceAddressPrefixes": [ ],
+              "destinationAddressPrefixes": [ ]
+            }
+          },
+          {
+            "name": "Port445",            
+            "properties": {              
+              "protocol": "TCP",
+              "sourcePortRange": "*",
+              "destinationPortRange": "445",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 1060,
+              "direction": "Inbound",
+              "sourcePortRanges": [ ],
+              "destinationPortRanges": [ ],
+              "sourceAddressPrefixes": [ ],
+              "destinationAddressPrefixes": [ ]
+            }
+          }
+        ],
+        "defaultSecurityRules": [
+          {
+            "name": "AllowVnetInBound",            
+            "properties": {              
+              "description": "Allow inbound traffic from all VMs in VNET",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "*",
+              "sourceAddressPrefix": "VirtualNetwork",
+              "destinationAddressPrefix": "VirtualNetwork",
+              "access": "Allow",
+              "priority": 65000,
+              "direction": "Inbound",
+              "sourcePortRanges": [ ],
+              "destinationPortRanges": [ ],
+              "sourceAddressPrefixes": [ ],
+              "destinationAddressPrefixes": [ ]
+            }
+          },
+          {
+            "name": "AllowAzureLoadBalancerInBound",            
+            "properties": {              
+              "description": "Allow inbound traffic from azure load balancer",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "*",
+              "sourceAddressPrefix": "AzureLoadBalancer",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 65001,
+              "direction": "Inbound",
+              "sourcePortRanges": [ ],
+              "destinationPortRanges": [ ],
+              "sourceAddressPrefixes": [ ],
+              "destinationAddressPrefixes": [ ]
+            }
+          },
+          {
+            "name": "DenyAllInBound",
+            "etag": "W/\"c7c3078b-57b9-40a1-9d51-ffe0402e24ee\"",
+            "properties": {
+              "provisioningState": "Succeeded",
+              "description": "Deny all inbound traffic",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "*",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Deny",
+              "priority": 65500,
+              "direction": "Inbound",
+              "sourcePortRanges": [ ],
+              "destinationPortRanges": [ ],
+              "sourceAddressPrefixes": [ ],
+              "destinationAddressPrefixes": [ ]
+            }
+          },
+          {
+            "name": "AllowVnetOutBound",            
+            "properties": {              
+              "description": "Allow outbound traffic from all VMs to all VMs in VNET",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "*",
+              "sourceAddressPrefix": "VirtualNetwork",
+              "destinationAddressPrefix": "VirtualNetwork",
+              "access": "Allow",
+              "priority": 65000,
+              "direction": "Outbound",
+              "sourcePortRanges": [ ],
+              "destinationPortRanges": [ ],
+              "sourceAddressPrefixes": [ ],
+              "destinationAddressPrefixes": [ ]
+            }
+          },
+          {
+            "name": "AllowInternetOutBound",            
+            "properties": {              
+              "description": "Allow outbound traffic from all VMs to Internet",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "*",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "Internet",
+              "access": "Allow",
+              "priority": 65001,
+              "direction": "Outbound",
+              "sourcePortRanges": [ ],
+              "destinationPortRanges": [ ],
+              "sourceAddressPrefixes": [ ],
+              "destinationAddressPrefixes": [ ]
+            }
+          },
+          {
+            "name": "DenyAllOutBound",            
+            "properties": {              
+              "description": "Deny all outbound traffic",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "*",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Deny",
+              "priority": 65500,
+              "direction": "Outbound",
+              "sourcePortRanges": [ ],
+              "destinationPortRanges": [ ],
+              "sourceAddressPrefixes": [ ],
+              "destinationAddressPrefixes": [ ]
+            }
+          }
+        ]
+      },
+      "dependsOn": [ ]
+    },
     {
       "apiVersion": "2017-03-30",
       "type": "Microsoft.Compute/virtualMachines",
@@ -211,7 +474,7 @@
     {
       "apiVersion": "2015-06-15",
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(parameters('vmName'),'/installlutil')]",      
+      "name": "[concat(parameters('vmName'),'/installlscript')]",
       "location": "[variables('location')]",
       "dependsOn": [
         "[concat('Microsoft.Compute/virtualMachines/',parameters('vmName'))]"
@@ -228,6 +491,184 @@
           "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -File prerequsite.ps1"
         }
       }
+    },
+    {      
+      "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+      "name": "3389securitygroup",
+      "apiVersion": "2018-02-01",      
+      "properties": {        
+        "protocol": "TCP",
+        "sourcePortRange": "*",
+        "destinationPortRange": "3389",
+        "sourceAddressPrefix": "*",
+        "destinationAddressPrefix": "*",
+        "access": "Allow",
+        "priority": 1000,
+        "direction": "Inbound",
+        "sourcePortRanges": [ ],
+        "destinationPortRanges": [ ],
+        "sourceAddressPrefixes": [ ],
+        "destinationAddressPrefixes": [ ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkSecurityGroups',  variables('networksecuritygroupname'))]"
+      ]
+    },
+    {     
+      "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+      "name": "[concat(variables('networkSecurityGroups_name'), '/', 'Port10080']",
+      "apiVersion": "2018-02-01",      
+      "properties": {        
+        "protocol": "*",
+        "sourcePortRange": "*",
+        "destinationPortRange": "10080",
+        "sourceAddressPrefix": "*",
+        "destinationAddressPrefix": "*",
+        "access": "Allow",
+        "priority": 1010,
+        "direction": "Inbound",
+        "sourcePortRanges": [ ],
+        "destinationPortRanges": [ ],
+        "sourceAddressPrefixes": [ ],
+        "destinationAddressPrefixes": [ ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networksecuritygroupname'))]"
+      ]
+    },
+    {     
+      "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+      "name": "[concat(variables('networkSecurityGroups_name'), '/', 'Port_10081')]",
+      "apiVersion": "2018-02-01",      
+      "properties": {        
+        "protocol": "*",
+        "sourcePortRange": "*",
+        "destinationPortRange": "10081",
+        "sourceAddressPrefix": "*",
+        "destinationAddressPrefix": "*",
+        "access": "Allow",
+        "priority": 1020,
+        "direction": "Inbound",
+        "sourcePortRanges": [ ],
+        "destinationPortRanges": [ ],
+        "sourceAddressPrefixes": [ ],
+        "destinationAddressPrefixes": [ ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networksecuritygroupname'))]"
+      ]
+    },
+    {
+     
+      "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+      "name": "[concat(variables('networkSecurityGroups_name'), '/', 'Port_80'))]",
+      "apiVersion": "2018-02-01",      
+      "properties": {        
+        "protocol": "TCP",
+        "sourcePortRange": "*",
+        "destinationPortRange": "80",
+        "sourceAddressPrefix": "*",
+        "destinationAddressPrefix": "*",
+        "access": "Allow",
+        "priority": 1030,
+        "direction": "Inbound",
+        "sourcePortRanges": [ ],
+        "destinationPortRanges": [ ],
+        "sourceAddressPrefixes": [ ],
+        "destinationAddressPrefixes": [ ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networksecuritygroupname'))]"
+      ]
+    },
+    {     
+      "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+      "name": "[concat(variables('networkSecurityGroups_name'), '/', 'Port_1433')]",
+      "apiVersion": "2018-02-01",      
+      "properties": {        
+        "protocol": "*",
+        "sourcePortRange": "*",
+        "destinationPortRange": "1433",
+        "sourceAddressPrefix": "*",
+        "destinationAddressPrefix": "*",
+        "access": "Allow",
+        "priority": 1040,
+        "direction": "Inbound",
+        "sourcePortRanges": [ ],
+        "destinationPortRanges": [ ],
+        "sourceAddressPrefixes": [ ],
+        "destinationAddressPrefixes": [ ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networksecuritygroupname'))]"
+      ]
+    },
+    {     
+      "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+      "name": "[concat(variables('networkSecurityGroups_name'), '/', 'Port_5432')]",
+      "apiVersion": "2018-02-01",      
+      "properties": {        
+        "protocol": "*",
+        "sourcePortRange": "*",
+        "destinationPortRange": "5432",
+        "sourceAddressPrefix": "*",
+        "destinationAddressPrefix": "*",
+        "access": "Allow",
+        "priority": 1050,
+        "direction": "Inbound",
+        "sourcePortRanges": [ ],
+        "destinationPortRanges": [ ],
+        "sourceAddressPrefixes": [ ],
+        "destinationAddressPrefixes": [ ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkSecurityGroups',variables('networksecuritygroupname'))]"
+      ]
+    },
+    {     
+      "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+      "name": "[concat(variables('networkSecurityGroups_name'), '/', 'Port_445')]",
+      "apiVersion": "2018-02-01",      
+      "properties": {
+        "provisioningState": "Succeeded",
+        "protocol": "*",
+        "sourcePortRange": "*",
+        "destinationPortRange": "445",
+        "sourceAddressPrefix": "*",
+        "destinationAddressPrefix": "*",
+        "access": "Allow",
+        "priority": 100,
+        "direction": "Outbound",
+        "sourcePortRanges": [ ],
+        "destinationPortRanges": [ ],
+        "sourceAddressPrefixes": [ ],
+        "destinationAddressPrefixes": [ ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networksecuritygroupname'))]"
+      ]
+    },
+    {     
+      "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+      "name": "[concat(variables('networkSecurityGroups_name'), '/', 'Port_445')]",
+      "apiVersion": "2018-02-01",      
+      "properties": {        
+        "protocol": "TCP",
+        "sourcePortRange": "*",
+        "destinationPortRange": "445",
+        "sourceAddressPrefix": "*",
+        "destinationAddressPrefix": "*",
+        "access": "Allow",
+        "priority": 1060,
+        "direction": "Inbound",
+        "sourcePortRanges": [ ],
+        "destinationPortRanges": [ ],
+        "sourceAddressPrefixes": [ ],
+        "destinationAddressPrefixes": [ ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networksecuritygroupname'))]"
+      ]
     }
   ],
   "outputs": {
