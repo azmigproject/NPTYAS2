@@ -342,10 +342,8 @@
             }
           },
           {
-            "name": "DenyAllInBound",
-            "etag": "W/\"c7c3078b-57b9-40a1-9d51-ffe0402e24ee\"",
-            "properties": {
-              "provisioningState": "Succeeded",
+            "name": "DenyAllInBound",            
+            "properties": {              
               "description": "Deny all inbound traffic",
               "protocol": "*",
               "sourcePortRange": "*",
@@ -490,29 +488,7 @@
           "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -File prerequsite.ps1"
         }
       }
-    },
-    {      
-      "type": "Microsoft.Network/networkSecurityGroups/securityRules",
-      "name": "[concat(variables('networkSecurityGroups_name'),'/Port_3389')]",
-      "apiVersion": "2018-02-01",      
-      "properties": {        
-        "protocol": "TCP",
-        "sourcePortRange": "*",
-        "destinationPortRange": "3389",
-        "sourceAddressPrefix": "*",
-        "destinationAddressPrefix": "*",
-        "access": "Allow",
-        "priority": 1000,
-        "direction": "Inbound",
-        "sourcePortRanges": [ ],
-        "destinationPortRanges": [ ],
-        "sourceAddressPrefixes": [ ],
-        "destinationAddressPrefixes": [ ]
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroups_name'))]"
-      ]
-    },
+    },   
     {     
       "type": "Microsoft.Network/networkSecurityGroups/securityRules",
       "name": "[concat(variables('networkSecurityGroups_name'), '/', 'Port10080')]",
@@ -622,28 +598,6 @@
       },
       "dependsOn": [
         "[resourceId('Microsoft.Network/networkSecurityGroups',variables('networkSecurityGroups_name'))]"
-      ]
-    }, 
-    {     
-      "type": "Microsoft.Network/networkSecurityGroups/securityRules",
-      "name": "[concat(variables('networkSecurityGroups_name'), '/', 'Port_445')]",
-      "apiVersion": "2018-02-01",      
-      "properties": {        
-        "protocol": "TCP",
-        "sourcePortRange": "*",
-        "destinationPortRange": "445",
-        "sourceAddressPrefix": "*",
-        "destinationAddressPrefix": "*",
-        "access": "Allow",
-        "priority": 1060,
-        "direction": "Inbound",
-        "sourcePortRanges": [ ],
-        "destinationPortRanges": [ ],
-        "sourceAddressPrefixes": [ ],
-        "destinationAddressPrefixes": [ ]
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroups_name'))]"
       ]
     }
   ],
