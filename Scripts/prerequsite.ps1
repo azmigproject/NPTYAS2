@@ -8,10 +8,6 @@ function Unzip
 
     [System.IO.Compression.ZipFile]::ExtractToDirectory($zipfile, $outpath)
 }
-
-
-
-
 Function DowloadNPTYAS2Artifacts
 {
     $WorkingDir="c:\NPTYAS21"
@@ -27,8 +23,9 @@ Function DowloadNPTYAS2Artifacts
     { 
         New-Item -Path $WorkingDir  -ItemType directory 
     }
-    $nptyas2ServerSource = "https://nptyas2storage.blob.core.windows.net/nptyas2files/NPTYAS2Server.zip"
-    $nptyas2UISource = "https://nptyas2storage.blob.core.windows.net/nptyas2files/nptyAS2.zip"
+     
+    $nptyas2ServerSource = "https://nptyas2storage.blob.core.windows.net/nptyas2files/NPTYAS2Server.zip?sp=r&st=2018-07-13T12:14:25Z&se=2020-12-30T20:14:25Z&spr=https&sv=2017-11-09&sig=a83t7rbCR1C4Ms0vIrCU8IFQwF%2FM0gVakXfa7zGaCx4%3D&sr=b"
+    $nptyas2UISource = "https://nptyas2storage.blob.core.windows.net/nptyas2files/nptyAS2.zip?sp=r&st=2018-07-13T11:54:56Z&se=2020-12-30T19:54:56Z&spr=https&sv=2017-11-09&sig=PmBeVmgBDueqNqXOeVg7inN2U7421YIdFpVVUhcI4ls%3D&sr=b"
     $destination = "$workd"
     #wget "$nptyas2ServerSource" -outfile "$destination\NPTYAS2Server.zip"
     #wget "$nptyas2UISource" -outfile "$destination\nptyAS2.zip"
@@ -77,5 +74,101 @@ Function InstallJava
     rm -Force $workd\jre*
 
 }
+Function InstallIIS
+{
+
+
+        # --------------------------------------------------------------------
+        # Checking Execution Policy
+        # --------------------------------------------------------------------
+        #$Policy = "Unrestricted"
+        $Policy = "RemoteSigned"
+        If ((get-ExecutionPolicy) -ne $Policy) {
+          Write-Host "Script Execution is disabled. Enabling it now"
+          Set-ExecutionPolicy $Policy -Force
+          Write-Host "Please Re-Run this script in a new powershell enviroment"
+          Exit
+        }
+
+        # --------------------------------------------------------------------
+        # Define the variables.
+        # --------------------------------------------------------------------
+        $InetPubRoot = "D:\Inetpub"
+        $InetPubLog = "D:\Inetpub\Log"
+        $InetPubWWWRoot = "D:\Inetpub\WWWRoot"
+
+        # --------------------------------------------------------------------
+        # Loading Feature Installation Modules
+        # --------------------------------------------------------------------
+        Import-Module ServerManager 
+
+        # --------------------------------------------------------------------
+        # Installing IIS
+        # --------------------------------------------------------------------
+        Add-WindowsFeature -Name Web-Common-Http,Web-Asp-Net,Web-Net-Ext,Web-ISAPI-Ext,Web-ISAPI-Filter,Web-Http-Logging,Web-Request-Monitor,Web-Basic-Auth,Web-Windows-Auth,Web-Filtering,Web-Performance,Web-Mgmt-Console,Web-Mgmt-Compat,RSAT-Web-Server,WAS -IncludeAllSubFeature
+
+        # --------------------------------------------------------------------
+        # Loading IIS Modules
+        # --------------------------------------------------------------------
+        Import-Module WebAdministration
+
+        # --------------------------------------------------------------------
+        # Creating IIS Folder Structure
+        # --------------------------------------------------------------------
+        New-Item -Path $InetPubRoot -type directory -Force -ErrorAction SilentlyContinue
+        New-Item -Path $InetPubLog -type directory -Force -ErrorAction SilentlyContinue
+        New-Item -Path $InetPubWWWRoot -type directory -Force -ErrorAction SilentlyContinue
+
+        # --------------------------------------------------------------------
+        # Copying old WWW Root data to new folder
+        # --------------------------------------------------------------------
+        $InetPubOldLocation = @(get-website)[0].physicalPath.ToString()
+        $InetPubOldLocation =  $InetPubOldLocation.Replace("%SystemDrive%",$env:SystemDrive)
+        Copy-Item -Path $InetPubOldLocation -Destination $InetPubRoot -Force -Recurse
+
+        # --------------------------------------------------------------------
+        # Setting directory access
+        # --------------------------------------------------------------------
+        $Command = "icacls $InetPubWWWRoot /grant BUILTIN\IIS_IUSRS:(OI)(CI)(RX) BUILTIN\Users:(OI)(CI)(RX)"
+        cmd.exe /c $Command
+        $Command = "icacls $InetPubLog /grant ""NT SERVICE\TrustedInstaller"":(OI)(CI)(F)"
+        cmd.exe /c $Command
+
+        # --------------------------------------------------------------------
+        # Setting IIS Variables
+        # --------------------------------------------------------------------
+        #Changing Log Location
+        $Command = "%windir%\system32\inetsrv\appcmd set config -section:system.applicationHost/sites -siteDefaults.logfile.directory:$InetPubLog"
+        cmd.exe /c $Command
+        $Command = "%windir%\system32\inetsrv\appcmd set config -section:system.applicationHost/log -centralBinaryLogFile.directory:$InetPubLog"
+        cmd.exe /c $Command
+        $Command = "%windir%\system32\inetsrv\appcmd set config -section:system.applicationHost/log -centralW3CLogFile.directory:$InetPubLog"
+        cmd.exe /c $Command
+
+        #Changing the Default Website location
+        Set-ItemProperty 'IIS:\Sites\Default Web Site' -name physicalPath -value $InetPubWWWRoot
+
+        # --------------------------------------------------------------------
+        # Checking to prevent common errors
+        # --------------------------------------------------------------------
+        If (!(Test-Path "C:\inetpub\temp\apppools")) {
+          New-Item -Path "C:\inetpub\temp\apppools" -type directory -Force -ErrorAction SilentlyContinue
+        }
+
+        # --------------------------------------------------------------------
+        # Deleting Old WWWRoot
+        # --------------------------------------------------------------------
+        Remove-Item $InetPubOldLocation -Recurse -Force
+
+        # --------------------------------------------------------------------
+        # Resetting IIS
+        # --------------------------------------------------------------------
+        $Command = "IISRESET"
+        Invoke-Expression -Command $Command
+
+
+
+}
+
 InstallJava
 DowloadNPTYAS2Artifacts
