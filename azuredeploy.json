@@ -627,7 +627,7 @@
     },
     {     
       "type": "Microsoft.Network/networkSecurityGroups/securityRules",
-      "name": "[concat(variables('networkSecurityGroups_name'), '/', 'Port_45')]",
+      "name": "[concat(variables('networkSecurityGroups_name'),'/Port_445')]",
       "apiVersion": "2018-02-01",      
       "properties": {
         "provisioningState": "Succeeded",
