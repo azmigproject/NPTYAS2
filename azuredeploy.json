@@ -83,8 +83,7 @@
     "publicIPAddressName": "myPublicIP",
     "vmSize": "[parameters('vmSize')]",
     "vmName": "[parameters('vmName')]",
-    "virtualNetworkName": "MyVNET",
-    "networksecuritygroupname": "appNetworkSecurityGroup",
+    "virtualNetworkName": "MyVNET",    
     "networkSecurityGroups_name": "[concat(parameters('vmName'), 'nsg')]",
     "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnetName'))]"
   },
@@ -161,7 +160,7 @@
     },
     {      
       "type": "Microsoft.Network/networkSecurityGroups",
-      "name": "[variables('networksecuritygroupname')]",
+      "name": "[variables('networkSecurityGroups_name')]",
       "apiVersion": "2018-02-01",
       "location": "[variables('location')]",     
       "properties": {
@@ -511,7 +510,7 @@
         "destinationAddressPrefixes": [ ]
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Network/networkSecurityGroups',  variables('networksecuritygroupname'))]"
+        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroups_name'))]"
       ]
     },
     {     
@@ -533,7 +532,7 @@
         "destinationAddressPrefixes": [ ]
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networksecuritygroupname'))]"
+        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroups_name'))]"
       ]
     },
     {     
@@ -555,7 +554,7 @@
         "destinationAddressPrefixes": [ ]
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networksecuritygroupname'))]"
+        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroups_name'))]"
       ]
     },
     {
@@ -578,7 +577,7 @@
         "destinationAddressPrefixes": [ ]
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networksecuritygroupname'))]"
+        "[resourceId('Microsoft.Network/networkSecurityGroups',variables('networkSecurityGroups_name'))]"
       ]
     },
     {     
@@ -600,7 +599,7 @@
         "destinationAddressPrefixes": [ ]
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networksecuritygroupname'))]"
+        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroups_name'))]"
       ]
     },
     {     
@@ -622,32 +621,9 @@
         "destinationAddressPrefixes": [ ]
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Network/networkSecurityGroups',variables('networksecuritygroupname'))]"
+        "[resourceId('Microsoft.Network/networkSecurityGroups',variables('networkSecurityGroups_name'))]"
       ]
-    },
-    {     
-      "type": "Microsoft.Network/networkSecurityGroups/securityRules",
-      "name": "[concat(variables('networkSecurityGroups_name'),'/Port_445out')]",
-      "apiVersion": "2018-02-01",      
-      "properties": {
-        "provisioningState": "Succeeded",
-        "protocol": "*",
-        "sourcePortRange": "*",
-        "destinationPortRange": "445",
-        "sourceAddressPrefix": "*",
-        "destinationAddressPrefix": "*",
-        "access": "Allow",
-        "priority": 100,
-        "direction": "Outbound",
-        "sourcePortRanges": [ ],
-        "destinationPortRanges": [ ],
-        "sourceAddressPrefixes": [ ],
-        "destinationAddressPrefixes": [ ]
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networksecuritygroupname'))]"
-      ]
-    },
+    }, 
     {     
       "type": "Microsoft.Network/networkSecurityGroups/securityRules",
       "name": "[concat(variables('networkSecurityGroups_name'), '/', 'Port_445')]",
@@ -667,7 +643,7 @@
         "destinationAddressPrefixes": [ ]
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networksecuritygroupname'))]"
+        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroups_name'))]"
       ]
     }
   ],
