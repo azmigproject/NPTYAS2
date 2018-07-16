@@ -75,8 +75,8 @@ Function InstallJava
 
 Function InstallJavaPolicy
 {
-    $workd = "c:\temp"
-    $WorkingDir="c:\temp\JavaFiles"
+    $workd = "c:\NPTYAS2tempFiles"
+    $WorkingDir="c:\NPTYAS2tempFiles\JavaFiles"
     $src = "$WorkingDir\jce_policy-8"
     $dst = "C:\Program Files (x86)\Java\jre1.8.0_161\lib\security"
     $destination = "$workd" 
