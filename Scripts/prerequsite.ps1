@@ -26,9 +26,7 @@ Function DowloadNPTYAS2Artifacts
      
     $nptyas2ServerSource = "https://nptyas2storage.blob.core.windows.net/nptyas2files/NPTYAS2Server.zip?sp=r&st=2018-07-13T12:14:25Z&se=2020-12-30T20:14:25Z&spr=https&sv=2017-11-09&sig=a83t7rbCR1C4Ms0vIrCU8IFQwF%2FM0gVakXfa7zGaCx4%3D&sr=b"
     $nptyas2UISource = "https://nptyas2storage.blob.core.windows.net/nptyas2files/nptyAS2.zip?sp=r&st=2018-07-13T11:54:56Z&se=2020-12-30T19:54:56Z&spr=https&sv=2017-11-09&sig=PmBeVmgBDueqNqXOeVg7inN2U7421YIdFpVVUhcI4ls%3D&sr=b"
-    $destination = "$workd"
-    #wget "$nptyas2ServerSource" -outfile "$destination\NPTYAS2Server.zip"
-    #wget "$nptyas2UISource" -outfile "$destination\nptyAS2.zip"
+    $destination = "$workd"   
     $client = New-Object System.Net.WebClient    
     $client.DownloadFile($nptyas2ServerSource, "$destination\NPTYAS2Server.zip")
     $client.DownloadFile($nptyas2UISource, "$destination\nptyAS2.zip")
@@ -74,6 +72,27 @@ Function InstallJava
     rm -Force $workd\jre*
 
 }
+
+Function InstallJavaPolicy
+{
+    $workd = "c:\temp"
+    $WorkingDir="c:\temp\JavaFiles"
+    $src = "$WorkingDir"
+    $dst = "C:\Program Files (x86)\Java\jre1.8.0_161\lib\security"
+    $destination = "$workd" 
+    If (!(Test-Path -Path $WorkingDir -PathType Container))
+    { 
+        New-Item -Path $WorkingDir  -ItemType directory 
+    }
+    $JavaPolicy="https://nptyas2storage.blob.core.windows.net/nptyas2files/jce_policy-8.zip?sp=r&st=2018-07-16T09:58:59Z&se=2020-12-31T17:58:59Z&spr=https&sv=2017-11-09&sig=DJ8khVFu43lNQHMIUyz7Wsn96heaPKy8JpVgS6Hi7AQ%3D&sr=b"
+      
+    $client = New-Object System.Net.WebClient    
+    $client.DownloadFile($JavaPolicy, "$destination\jce_policy-8.zip")
+    Unzip "$workd\jce_policy-8.zip" "$WorkingDir"
+    Get-ChildItem $src | Move-Item -Destination $dst -Force
+
+}
+
 Function InstallIIS
 {
 
@@ -171,4 +190,5 @@ Function InstallIIS
 }
 
 InstallJava
+InstallJavaPolicy
 DowloadNPTYAS2Artifacts
