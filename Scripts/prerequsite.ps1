@@ -77,7 +77,7 @@ Function InstallJavaPolicy
 {
     $workd = "c:\temp"
     $WorkingDir="c:\temp\JavaFiles"
-    $src = "$WorkingDir"
+    $src = "$WorkingDir\JavaFiles"
     $dst = "C:\Program Files (x86)\Java\jre1.8.0_161\lib\security"
     $destination = "$workd" 
     If (!(Test-Path -Path $WorkingDir -PathType Container))
